@@ -1,0 +1,41 @@
+name: SonarQube Scan
+
+on:
+  push:
+    branches:
+      - main  # or 'master' or any branch you prefer
+
+jobs:
+  sonar-scanner:
+    name: Run SonarQube Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'  # Make sure this matches your sonar-scanner requirement
+
+      - name: Cache SonarQube packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: SonarQube Scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
+          unzip sonar-scanner-cli-5.0.1.3006-linux.zip
+          export PATH="$PATH:$(pwd)/sonar-scanner-5.0.1.3006-linux/bin"
+          sonar-scanner \
+            -Dsonar.projectKey=my-first-project \
+            -Dsonar.sources=. \
+            -Dsonar.host.url=http://localhost:9000 \
+            -Dsonar.token=$SONAR_TOKEN
