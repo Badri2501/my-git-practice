@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 Conflicting line in main
+=======
+Added in feature branch
+>>>>>>> 1c077ff (Feature branch change)
